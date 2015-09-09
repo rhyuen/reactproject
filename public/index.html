@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>React MainView</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+    <script type="text/jsx">
+      var PostContainer = React.createClass({
+        getInitialState: function(){
+          return {
+            title: "title",
+            content: "content"
+          };
+        },
+
+        componentDidMount: function(){
+          $.get(this.props.url, function(result){
+            var post = result[2];
+
+            if(this.isMounted()){
+              this.setState({
+                title: post.title,
+                content: post.content
+              });
+            }
+
+          }.bind(this));
+        },
+
+        render: function(){
+          return (
+            <div>
+              <p>{this.state.title}</p>
+              <p>{this.state.content}</p>
+            </div>
+          );
+        }
+      })
+
+
+      React.render(
+        <PostContainer url = "/posts" />,
+        document.getElementById('main')
+      );
+    </script>
+  </body>
+</html>

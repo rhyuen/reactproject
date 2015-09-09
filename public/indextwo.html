@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
+
+    <script type="text/jsx">
+      var WholeBlogBox = React.createClass({
+        render: function(){
+          return (
+            <div className = "WholeBlogBox">
+              <h1>BlogBox</h1>
+              <BlogEntryList/>
+              <BlogEntryForm/>
+            </div>
+          );
+        }
+      });
+
+      var BlogEntryList = React.createClass({
+        render: function(){
+            return(
+              <div className = "BlogEntryList">
+                <BlogEntry title = "The Spectacular Spider-man">Spiderman is awesome.</BlogEntry>
+                <BlogEntry title = "The Uncanny X-men">Fox is ruining the x-men.</BlogEntry>
+              </div>
+            );
+        }
+      });
+
+      var BlogEntryForm = React.createClass({
+        render: function(){
+          return (
+            <div className = "BlogEntryForm">
+              BlogEntryForm
+            </div>
+          );
+        }
+      });
+
+      var BlogEntry = React.createClass({
+        render: function(){
+          return(
+            <div className = "BlogEntry">
+              <h2 className = "BlogEntryTitle">{this.props.title}</h2>
+              {this.props.children}
+            </div>
+
+          );
+        }
+      })
+
+      React.render(<WholeBlogBox/>, document.getElementById("content"));
+    </script>
+  </body>
+</html>
