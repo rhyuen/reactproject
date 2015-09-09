@@ -3,7 +3,7 @@ var morgan = require("morgan");
 var path = require("path");
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
-var port = 8888;
+var port = process.env.PORT || 8888;
 
 var config = require("./config.js");
 var Post = require("./model/post.js");
