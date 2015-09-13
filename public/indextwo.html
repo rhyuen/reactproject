@@ -11,12 +11,33 @@
     <div id="content"></div>
 
     <script type="text/jsx">
+      var comicContainer = [
+        {title: "Green Lantern", content: "The new GL looks like a Hobo."},
+        {title: "Superman", content: "Superman is a crummier version of Captain A."}
+      ];
+
       var WholeBlogBox = React.createClass({
+        getInitialState: function(){
+          return {data: []};
+        },
+        getDataFromServer: function(){
+          $.get(this.props.data, function(result){
+            if(this.isMounted()){
+              this.setState({
+                data: result
+              });
+            }
+          }.bind(this));
+        },
+        componentDidMount: function(){
+          this.getDataFromServer();
+          setInterval(this.getDataFromServer, this.props.pollInterval);
+        },
         render: function(){
           return (
             <div className = "WholeBlogBox">
               <h1>BlogBox</h1>
-              <BlogEntryList/>
+              <BlogEntryList data = {this.state.data}/>
               <BlogEntryForm/>
             </div>
           );
@@ -25,10 +46,20 @@
 
       var BlogEntryList = React.createClass({
         render: function(){
+            var blogNodes = this.props.data.map(function(node){
+              return (
+                <BlogEntry title = {node.title}>
+                  {node.content}
+                </BlogEntry>
+              );
+            });
+
+
             return(
               <div className = "BlogEntryList">
-                <BlogEntry title = "The Spectacular Spider-man">Spiderman is awesome.</BlogEntry>
-                <BlogEntry title = "The Uncanny X-men">Fox is ruining the x-men.</BlogEntry>
+                {blogNodes}
+                <BlogEntry title = "HARDCODED: The Spectacular Spider-man">Spiderman is awesome.</BlogEntry>
+                <BlogEntry title = "HARDCODED: The Uncanny X-men">Fox is ruining the x-men.</BlogEntry>
               </div>
             );
         }
@@ -37,8 +68,12 @@
       var BlogEntryForm = React.createClass({
         render: function(){
           return (
-            <div className = "BlogEntryForm">
-              BlogEntryForm
+            <div className = "BlogEntryForm" >
+              <form action = "/posts" method = "post">
+                <input type = "text" name = "title" placeholder = "blog entry title"/>
+                <input type = "text" name = "content" placeholder = "share your mind"/>
+                <button type = "submit">Send</button>
+              </form>
             </div>
           );
         }
@@ -56,7 +91,7 @@
         }
       })
 
-      React.render(<WholeBlogBox/>, document.getElementById("content"));
+      React.render(<WholeBlogBox data = "/posts" pollInterval = {2000}/>, document.getElementById("content"));
     </script>
   </body>
 </html>

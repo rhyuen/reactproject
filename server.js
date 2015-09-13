@@ -11,7 +11,9 @@ var Post = require("./model/post.js");
 
 
 
-mongoose.connect(config.db, function(){
+mongoose.connect(config.dbtest, function(err){
+  if(err)
+    console.log(err);
   console.log("Db conn success.");
 });
 var app = express();
@@ -20,10 +22,11 @@ var app = express();
 
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 var router = express.Router();
+
 
 router.get("/", function(req, res){
   res.sendFile(path.join(__dirname, "/public/index.html"));
@@ -41,9 +44,6 @@ router.get("/posts", function(req, res){
   });
 });
 
-router.get("/*", function(req, res){
-  res.redirect("/");
-});
 
 router.post("/posts", function(req,res){
   var newPost = new Post();
@@ -52,7 +52,8 @@ router.post("/posts", function(req,res){
   newPost.save(function(err, data){
     if(err)
       console.log(err);
-    res.send("new Post created.  Success.");
+    console.log("Success.  New post added. %s", data);
+    //res.redirect("/altindex");
   });
 });
 
