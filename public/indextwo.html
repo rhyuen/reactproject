@@ -29,6 +29,11 @@
             }
           }.bind(this));
         },
+        handleBlogPostSubmit: function(blog){
+          $.post(this.props.data, blog, function(data){
+            this.setState({data: data});
+          });
+        },
         componentDidMount: function(){
           this.getDataFromServer();
           setInterval(this.getDataFromServer, this.props.pollInterval);
@@ -38,7 +43,7 @@
             <div className = "WholeBlogBox">
               <h1>BlogBox</h1>
               <BlogEntryList data = {this.state.data}/>
-              <BlogEntryForm/>
+              <BlogEntryForm onBlogPostSubmit = {this.handleBlogPostSubmit}/>
             </div>
           );
         }
@@ -66,13 +71,24 @@
       });
 
       var BlogEntryForm = React.createClass({
+        handleSubmit: function(e){
+            e.preventDefault();
+            var title = React.findDOMNode(this.refs.title).value.trim();
+            var content = React.findDOMNode(this.refs.content).value.trim();
+            if(!title || !content)
+              return;
+            this.props.onBlogPostSubmit({title: title, content: content});
+            React.findDOMNode(this.refs.title).value = "";
+            React.findDOMNode(this.refs.content).value = "";
+            return;
+        },
         render: function(){
           return (
             <div className = "BlogEntryForm" >
-              <form action = "/posts" method = "post">
-                <input type = "text" name = "title" placeholder = "blog entry title"/>
-                <input type = "text" name = "content" placeholder = "share your mind"/>
-                <button type = "submit">Send</button>
+              <form action = "/posts" method = "post" onSubmit = {this.handleSubmit}>
+                <input type = "text" name = "title" ref = "title" placeholder = "blog entry title"/>
+                <input type = "text" name = "content" ref = "content" placeholder = "share your mind"/>
+                <input type = "submit" value = "Post"/>
               </form>
             </div>
           );
@@ -91,7 +107,7 @@
         }
       })
 
-      React.render(<WholeBlogBox data = "/posts" pollInterval = {2000}/>, document.getElementById("content"));
+      React.render(<WholeBlogBox data = "/posts" pollInterval = {10000}/>, document.getElementById("content"));
     </script>
   </body>
 </html>
